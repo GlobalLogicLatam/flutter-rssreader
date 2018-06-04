@@ -3,25 +3,25 @@ import 'package:flutter_rss/model/RSSResult.dart';
 import 'package:flutter_rss/model/RSSItem.dart';
 import 'package:flutter_rss/network/RssRequest.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Flutter RSS',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: new MyHomePage(),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   @override
-  _MyHomePageState createState() => new _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -29,11 +29,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("RSS"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("RSS"),
       ),
-      body: new Center(
+      body: Center(
         child: FutureBuilder<RSSResult>(
           future: RssRequest().execute(),
           builder: (context, snapshot) {
@@ -45,9 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
               );
             } else if (snapshot.hasError) {
-              return new Text("${snapshot.error}");
+              return Text("${snapshot.error}");
             }
-            return new CircularProgressIndicator();
+            return CircularProgressIndicator();
           }
         )
       ),
@@ -55,20 +55,75 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getRow(RSSItem rssItem) {
-    return Padding(
+    return GestureDetector(
+      child: Padding(
         padding: EdgeInsets.all(10.0),
         child: Column(
           children: <Widget>[
-            Image.network(rssItem.multimedia.last.url),
+            Image.network(rssItem.multimedia.last.url), // validate if rss does not have an image !
             Text(
               rssItem.title,
-              style: new TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
               )
             ),
             Text(rssItem.multimedia.last.caption.padRight(100))
           ],
         ),
+      ),
+      onTap: () {
+        Navigator.push(
+          context, 
+          MaterialPageRoute(
+            builder: (context) => RSSDetailPage(rssItem: rssItem)
+          )
+        );
+      },
+    );
+  }
+}
+
+
+class RSSDetailPage extends StatelessWidget {
+
+  final RSSItem rssItem;
+
+  RSSDetailPage({Key key, @required this.rssItem}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(rssItem.title),
+      ),
+      body: ListView(
+        children: [
+          Image.network(
+            rssItem.multimedia.last.url,
+            fit: BoxFit.fitWidth,
+          ),
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(rssItem.title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20.0
+                )
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            child: Text(
+              rssItem.multimedia.last.caption,
+              softWrap: true,
+              style: TextStyle(
+                  fontSize: 16.0
+                )
+            )
+          )
+        ]
+      )
     );
   }
 }
