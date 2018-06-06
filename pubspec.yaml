@@ -1,5 +1,5 @@
 name: flutter_rss
-description: A new Flutter project.
+description: A RSS reader of the New York Times
 
 dependencies:
   flutter:
