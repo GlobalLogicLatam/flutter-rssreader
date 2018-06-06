@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:transparent_image/transparent_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_rss/model/RSSResult.dart';
 import 'package:flutter_rss/model/RSSItem.dart';
@@ -120,6 +122,18 @@ class RSSDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(rssItem.title),
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.open_in_browser),
+            tooltip: "Open in browser",
+            onPressed: () async {
+              if (await canLaunch(rssItem.url)) {
+                await launch(rssItem.url);
+              }
+            },
+          )
+        ],
+
       ),
       body: ListView(
         children: [
