@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
+
 import 'package:flutter_rss/model/RSSResult.dart';
 import 'package:flutter_rss/model/RSSItem.dart';
 import 'package:flutter_rss/network/RssRequest.dart';
@@ -28,7 +30,6 @@ class _MyHomePageState extends State<MyHomePage> {
   
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: Text("RSS"),
@@ -55,29 +56,52 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getRow(RSSItem rssItem) {
+
+    List<Widget> widgets = List();
+
+    if (rssItem.hasMedia) {
+      widgets.add(
+        FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          image: rssItem.multimedia.last.url
+        )
+      );
+    }
+
+    widgets.add(
+      Text(
+        rssItem.title,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        )
+      )
+    );
+
+    if (rssItem.hasMedia) {
+      widgets.add(
+        Text(rssItem.multimedia.last.caption.padRight(100))
+      );
+    }
+
+    widgets.add(Divider());
+    
+
     return GestureDetector(
       child: Padding(
         padding: EdgeInsets.all(10.0),
         child: Column(
-          children: <Widget>[
-            Image.network(rssItem.multimedia.last.url), // validate if rss does not have an image !
-            Text(
-              rssItem.title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-              )
-            ),
-            Text(rssItem.multimedia.last.caption.padRight(100))
-          ],
+          children: widgets
         ),
       ),
       onTap: () {
-        Navigator.push(
-          context, 
-          MaterialPageRoute(
-            builder: (context) => RSSDetailPage(rssItem: rssItem)
-          )
-        );
+        if (rssItem.hasMedia) {
+          Navigator.push(
+            context, 
+            MaterialPageRoute(
+              builder: (context) => RSSDetailPage(rssItem: rssItem)
+            )
+          );
+        }
       },
     );
   }

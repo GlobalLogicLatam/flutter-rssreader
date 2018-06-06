@@ -27,4 +27,6 @@ class RSSItem extends Object with _$RSSItemSerializerMixin {
 
   factory RSSItem.fromJson(Map<String, dynamic> json) => _$RSSItemFromJson(json);
 
+  bool get hasMedia => multimedia.isNotEmpty;
+
 }
